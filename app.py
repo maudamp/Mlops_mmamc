@@ -24,8 +24,8 @@ customer_id = st.sidebar.number_input('Identifiant du Client', min_value=0, step
 credit_lines_outstanding = st.sidebar.number_input('Nombre de Lignes de Crédit en Cours', min_value=0, help="Entrez le nombre de lignes de crédit actives pour le client.")
 loan_amt_outstanding = st.sidebar.number_input('Montant du Prêt en Cours (€)', min_value=0, help="Entrez le montant total du prêt en cours du client en Euro.")
 total_debt_outstanding = st.sidebar.number_input('Dette Totale en Cours (€)', min_value=0, help="Entrez le montant total de la dette du client en Euro.")
-income = st.sidebar.number_input('Revenus Annuels du Client (€)', min_value=0, help="Entrez le revenu annuel du client en Euro.")
-years_employed = st.sidebar.number_input("Nombre d'Années d'Emploi", min_value=0, step=1, help="Entrez le nombre d'années d'emploi du client dans son poste actuel.")
+income = st.sidebar.number_input('Revenus Annuels Client (€)', min_value=0, help="Entrez le revenu annuel du client en Euro.")
+years_employed = st.sidebar.number_input("Ancienneté emploi", min_value=0, step=1, help="Entrez le nombre d'années d'emploi du client dans son poste actuel.")
 fico_score = st.sidebar.number_input('Score FICO', min_value=300, max_value=850, help="Entrez le score FICO du client (entre 300 et 850).")
 
 # Créer un DataFrame avec les données utilisateur
@@ -48,7 +48,7 @@ else:
     st.write('Le client ne présente pas de risque de défaut de paiement.')
 
 # Bouton pour afficher les graphiques si les données sont complètes
-if st.button('Prédir'):
+if st.button('Prédire'):
     # 1. Graphique du Ratio d'Endettement
     debt_ratio = total_debt_outstanding / income if income != 0 else 0
 

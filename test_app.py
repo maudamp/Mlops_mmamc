@@ -1,38 +1,33 @@
-import pickle
-import pytest
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingClassifier
+import pickle
 
-# Charger le modèle et le scaler
-with open('model.pkl', 'rb') as model_file:
-    model = pickle.load(model_file)
+# Charger les données (remplacez par votre propre fichier CSV)
+df = pd.read_csv('Loan_Data.csv')
 
-with open('scaler.pkl', 'rb') as scaler_file:
-    scaler = pickle.load(scaler_file)
+# Diviser en caractéristiques (features) et cible (target)
+X = df.drop(columns=["default"])  # Exclure la colonne cible 'default'
+y = df["default"]  # La colonne cible 'default'
 
-# Nouvelles données à tester
-new_data = {
-    'customer_id': 7442532,
-    'credit_lines_outstanding': 5,
-    'loan_amt_outstanding': 1958.928726,
-    'total_debt_outstanding': 8228.75252,
-    'income': 26648.43525,
-    'years_employed': 2,
-    'fico_score': 572
-}
-def test_predict():
-    # Créer un DataFrame à partir des nouvelles données
-    new_data_df = pd.DataFrame([new_data])
-    
-    # Normaliser les nouvelles données
-    new_data_normalized = scaler.transform(new_data_df)
-    
-    # Prédiction
-    prediction = model.predict(new_data_normalized)
-    prediction_proba = model.predict_proba(new_data_normalized)  # Obtenir les probabilités des classes
+# Diviser les données en ensembles d'entraînement et de validation
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Afficher les résultats pour analyse
-    print(f"Prediction: {prediction[0]}")
-    print(f"Prediction Probabilities: {prediction_proba}")
+# Normaliser les données
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)  # Normaliser les données d'entraînement
+X_val = scaler.transform(X_val)  # Normaliser les données de validation en utilisant le même scaler
 
-    # Test si la prédiction est correcte (comparer à la première valeur)
-    assert prediction[0] == 1, f"Incorrect prediction: {prediction[0]} with probabilities {prediction_proba}"
+# Initialiser et entraîner le modèle
+model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
+model.fit(X_train, y_train)
+
+# Sauvegarder le modèle et le scaler
+with open('model.pkl', 'wb') as model_file:
+    pickle.dump(model, model_file)  # Sauvegarder le modèle dans 'model.pkl'
+
+with open('scaler.pkl', 'wb') as scaler_file:
+    pickle.dump(scaler, scaler_file)  # Sauvegarder le scaler dans 'scaler.pkl'
+
+print("Modèle et scaler sauvegardés dans model.pkl et scaler.pkl")
